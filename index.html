@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Initializing Field Terminal...</title>
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+	rel="stylesheet">
+<style>
+@import
+	url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Courier+Prime&display=swap')
+	;
+
+/* ====== FIXED COLOR PALETTE WITH BETTER CONTRAST ====== */
+:root {
+    --bg-color: #1C1917; /* Warm black */
+    --panel-color: #FFFBF5; /* Warm white */
+    --text-color: #2C2825; /* Dark warm grey - MUCH better contrast on white */
+    --accent-color: #57534E; /* Warm charcoal */
+    --border-color: #78716C; /* Stone grey */
+    --alert-color: #DC2626; /* Red */
+    --highlight-color: #F59E0B; /* Amber */
+    --success-color: #059669; /* Green for success messages */
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: 'Courier Prime', monospace;
+	background-color: var(--bg-color);
+	color: var(--text-color);
+	height: 100vh;
+	overflow: hidden;
+	position: relative;
+    animation: fadeIn 1.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* --- BACKGROUND EFFECTS --- */
+.vignette-overlay {
+	position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+	background: radial-gradient(circle, transparent 60%, rgba(0, 0, 0, 0.7) 120%);
+	pointer-events: none;
+	z-index: 0;
+}
+
+.grid-overlay {
+	position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+	background-image: linear-gradient(rgba(75, 83, 32, 0.07) 1px, transparent 1px), 
+                      linear-gradient(90deg, rgba(75, 83, 32, 0.07) 1px, transparent 1px);
+	background-size: 40px 40px;
+}
+
+/* --- MAIN CONTAINER --- */
+.splash-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	position: relative;
+	z-index: 2;
+	padding: 20px;
+}
+
+/* --- REFINED TERMINAL WINDOW --- */
+.terminal-window {
+	background: var(--panel-color); /* Solid, readable background */
+	border: 1px solid var(--border-color);
+	border-radius: 8px;
+	width: 90%;
+	max-width: 900px;
+	box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
+}
+
+.terminal-header {
+	background: var(--border-color);
+	padding: 8px 15px;
+	border-radius: 7px 7px 0 0;
+	display: flex;
+	align-items: center;
+	border-bottom: 1px solid var(--border-color);
+}
+
+.terminal-buttons { display: flex; gap: 8px; }
+.terminal-button { width: 12px; height: 12px; border-radius: 50%; border: 1px solid #000; }
+.close { background: var(--alert-color); }
+.minimize { background: var(--accent-color); }
+.maximize { background: var(--bg-color); }
+
+.terminal-title {
+	color: #FFFBF5;
+	font-family: 'Share Tech Mono', monospace;
+	font-size: 16px;
+	margin: 0 auto;
+}
+
+.terminal-content {
+	padding: 20px 30px 30px 30px;
+	min-height: 350px;
+}
+
+/* --- TYPING ANIMATION WITH BETTER CONTRAST --- */
+#output {
+	font-family: 'Courier Prime', monospace;
+	font-size: 16px;
+	line-height: 1.8;
+	margin-bottom: 25px;
+	white-space: pre-wrap;
+}
+
+.line .prompt { 
+    color: var(--accent-color); 
+    font-weight: bold;
+}
+.line .command { 
+    color: var(--text-color); /* Now uses dark color for good contrast */
+    font-weight: 500;
+}
+.line .response-success { 
+    color: var(--success-color); 
+    font-weight: bold; 
+}
+.line .response-error { 
+    color: var(--alert-color); 
+    font-weight: bold; 
+}
+
+.cursor {
+	display: inline-block;
+	background: var(--accent-color);
+	width: 10px;
+	height: 1.1em;
+	vertical-align: bottom;
+	animation: blink 1s step-end infinite;
+}
+
+@keyframes blink { 
+    50% { background: transparent; } 
+}
+
+/* --- BRANDING & ENTRY --- */
+#entry-section {
+	opacity: 0;
+	animation: fadeInUp 1.5s ease-out forwards;
+	animation-delay: 9s;
+	text-align: center;
+}
+
+.brand-name {
+	font-family: 'Share Tech Mono', monospace;
+	font-size: clamp(2em, 8vw, 4em);
+	background: linear-gradient(45deg, var(--accent-color), var(--text-color));
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+	margin-bottom: 10px;
+}
+
+.tagline {
+	color: var(--border-color);
+	font-size: clamp(1em, 3vw, 1.2em);
+	letter-spacing: 2px;
+	margin-bottom: 30px;
+}
+
+@keyframes fadeInUp {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.enter-button {
+	background: transparent;
+	border: 2px solid var(--border-color);
+	color: var(--accent-color);
+	padding: 12px 35px;
+	font-family: 'Share Tech Mono', monospace;
+	font-size: 16px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	text-transform: uppercase;
+	letter-spacing: 3px;
+}
+
+.enter-button:hover {
+	background: var(--accent-color);
+	border-color: var(--accent-color);
+	color: var(--panel-color);
+	box-shadow: 0 0 20px rgba(48, 48, 47, 0.4);
+}
+
+.enter-button:active {
+	transform: scale(0.98);
+}
+</style>
+</head>
+<body>
+	<!-- Background Layers -->
+	<div class="grid-overlay"></div>
+	<div class="vignette-overlay"></div>
+
+	<main class="splash-container">
+		<div class="terminal-window">
+			<header class="terminal-header">
+				<div class="terminal-buttons">
+					<div class="terminal-button close"></div>
+					<div class="terminal-button minimize"></div>
+					<div class="terminal-button maximize"></div>
+				</div>
+				<div class="terminal-title">[PORTFOLIO ACCESS TERMINAL] //
+					GUEST MODE</div>
+			</header>
+			<div class="terminal-content">
+				<div id="output"></div>
+
+				<div id="entry-section" style="opacity: 0; transform: translateY(20px);">
+					<div class="brand-name">Aaradhy.java</div>
+					<div class="tagline">// Full Stack Java Developer | Code
+						Alchemist | Problem Solver</div>
+					<button class="enter-button" onclick="enterPortfolio()">
+						<i class="fas fa-terminal"></i> Launch Interface
+					</button>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<script>
+        const output = document.getElementById('output');
+        const entrySection = document.getElementById('entry-section');
+
+        const lines = [
+            { text: 'Spinning up JVM Instance...', prompt: 'SYS:', speed: 40, delay: 1000 },
+            { text: 'Authenticating dev profile: Aaradhy.java', prompt: 'AUTH:', speed: 50, delay: 1500, response: 'VERIFIED', responseClass: 'response-success' },
+            { text: 'Fetching modules: Spring, Hibernate, JSP, Servlet...', prompt: 'BUILD:', speed: 30, delay: 1200 },
+            { text: 'Establishing connection to Portfolio Engine...', prompt: 'NET:', speed: 40, delay: 1000, response: 'CONNECTED', responseClass: 'response-success' },
+            { text: 'Decrypting source files...', prompt: 'ARCH:', speed: 50, delay: 1000 },
+            { text: '  > experience.class', speed: 25, delay: 300, response: 'LOADED', responseClass: 'response-success' },
+            { text: '  > projects.class', speed: 25, delay: 300, response: 'LOADED', responseClass: 'response-success' },
+            { text: '  > skills.interface', speed: 25, delay: 300, response: 'LOADED', responseClass: 'response-success' },
+            { text: 'Welcome, Guest. The Developer Archive is now online.', speed: 60, delay: 800, prompt: 'SYS:' }
+        ];
+
+        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+        async function typeSequence() {
+            for (const lineConfig of lines) {
+                const lineElement = document.createElement('div');
+                lineElement.className = 'line';
+                let content = '';
+                if (lineConfig.prompt) {
+                    content += '<span class="prompt">' + lineConfig.prompt + ' </span>';
+                }
+                content += '<span class="command"></span><span class="cursor"></span>';
+                lineElement.innerHTML = content;
+                output.appendChild(lineElement);
+
+                const commandSpan = lineElement.querySelector('.command');
+                for (let i = 0; i < lineConfig.text.length; i++) {
+                    commandSpan.textContent += lineConfig.text.charAt(i);
+                    await sleep(lineConfig.speed);
+                }
+
+                lineElement.querySelector('.cursor').remove();
+
+                if (lineConfig.response) {
+                    await sleep(200);
+                    const responseSpan = document.createElement('span');
+                    responseSpan.className = lineConfig.responseClass;
+                    responseSpan.textContent = ' [' + lineConfig.response + ']';
+                    lineElement.appendChild(responseSpan);
+                }
+                await sleep(lineConfig.delay);
+            }
+            entrySection.style.animationPlayState = 'running';
+        }
+
+        function enterPortfolio() {
+            document.body.style.transition = 'opacity 1s ease-out';
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                // IMPORTANT: Make sure this points to your main portfolio page
+                window.location.href = 'home.html'; 
+            }, 1000);
+        }
+        
+        // This is your easter egg, it is harmless and fun!
+        const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        let konamiIndex = 0;
+        document.addEventListener('keydown', (e) => {
+            if (e.key === konamiSequence[konamiIndex]) {
+                konamiIndex++;
+                if (konamiIndex === konamiSequence.length) {
+                    document.body.style.transition = 'filter 0.5s';
+                    document.body.style.filter = 'invert(1) hue-rotate(180deg)';
+                    setTimeout(() => { document.body.style.filter = 'none'; }, 1500);
+                    konamiIndex = 0;
+                }
+            } else {
+                konamiIndex = 0;
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', typeSequence);
+    </script>
+</body>
+</html>
