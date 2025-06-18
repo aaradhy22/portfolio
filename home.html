@@ -705,6 +705,28 @@
             color: var(--border-color);
         }
 
+        /* ADD THIS NEW BLOCK OF CSS */
+        .project-content-grid {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 20px;
+            align-items: start;
+            margin-bottom: 1.5em;
+            padding-left: 1em;
+        }
+
+        .project-image-container .project-thumbnail {
+            width: 100%;
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            filter: sepia(30%);
+            transition: filter 0.3s ease;
+        }
+
+        .project-image-container .project-thumbnail:hover {
+            filter: sepia(0%);
+        }
+
         .project-briefing::before {
             content: 'public class MissionBriefing {';
             color: var(--highlight-color);
@@ -991,6 +1013,24 @@
 
             #mobile-projects .project-details .project-briefing {
                 padding-left: 0;
+            }
+
+            #mobile-projects .project-content-grid {
+                grid-template-columns: 1fr;
+                /* Stack image and text */
+                padding-left: 0;
+            }
+
+            #mobile-projects .project-details {
+                font-size: 1em;
+                /* Slightly smaller font on mobile */
+            }
+
+            #mobile-projects .project-briefing p,
+            #mobile-projects .project-tags,
+            #mobile-projects .project-links {
+                padding-left: 1em;
+                /* Maintain some indentation */
             }
         }
     </style>
@@ -1481,35 +1521,40 @@
                     projectList.appendChild(item);
                 });
             },
+            // REPLACE the entire old function with this one
             populateMobileContent() {
                 const mobileProjectView = document.getElementById('mobile-project-view');
                 if (!mobileProjectView) return;
+
                 mobileProjectView.innerHTML = '';
                 portfolioData.projects.forEach(project => {
                     let tagsHTML = project.tags.map(tag => `<span>${tag}</span>`).join('');
-                    let linksHTML = '';
-                    if (project.liveUrl) { linksHTML += `<a href="${project.liveUrl}" target="_blank"><i class="fas fa-external-link-alt"></i> Live Demo</a>`; }
-                    if (project.sourceUrl) { linksHTML += ` <a href="${project.sourceUrl}" target="_blank"><i class="fab fa-github"></i> Source Code</a>`; }
+                    let linksHTML = project.sourceUrl ? `<a href="${project.sourceUrl}" target="_blank"><i class="fab fa-github"></i> Source</a>` : '';
+                    if (project.liveUrl) { linksHTML += ` <a href="${project.liveUrl}" target="_blank"><i class="fas fa-external-link-alt"></i> Demo</a>`; }
 
-                    // Create project content with styled syntax
+                    // Generate the same stylized HTML structure for mobile
                     const projectHTML = `
-                        <div class="project-details">
-                            <div class="project-header">
-                                <h3>${project.title}</h3>
-                            </div>
-                            <div class="project-briefing">
-                                <p>${project.description}</p>
-                            </div>
-                            <div class="project-tech-stack">
-                                 <div class="project-tags">${tagsHTML}</div>
-                            </div>
-                            <div class="project-links-container">
-                                <div class="project-links">${linksHTML}</div>
-                            </div>
-                        </div>`;
+        <div class="project-details">
+            <div class="project-header">
+                <h3>${project.title}</h3>
+                <div class="file-id">CASE FILE ID: ${project.id.toUpperCase()}</div>
+            </div>
+            <div class="project-briefing">
+                <p>${project.description}</p>
+            </div>
+            <div class="project-tech-stack">
+                <div class="project-tags">${tagsHTML}</div>
+            </div>
+            <div class="project-links-container">
+                <div class="project-links">${linksHTML}</div>
+            </div>
+        </div>`;
                     mobileProjectView.innerHTML += projectHTML;
                 });
-                document.querySelectorAll('#mobile-skills .skill-bar').forEach(bar => { bar.style.width = bar.dataset.level; });
+
+                document.querySelectorAll('#mobile-skills .skill-bar').forEach(bar => {
+                    bar.style.width = bar.dataset.level;
+                });
             },
             openProjectInEditor(projectId) {
                 if (!this.openProjectTabs.includes(projectId)) {
@@ -1559,27 +1604,28 @@
                     let linksHTML = project.sourceUrl ? `<a href="${project.sourceUrl}" target="_blank"><i class="fab fa-github"></i> Source Code</a>` : '';
                     if (project.liveUrl) { linksHTML += ` <a href="${project.liveUrl}" target="_blank"><i class="fas fa-external-link-alt"></i> Live Demo</a>`; }
 
+                    // THIS IS THE NEW, CORRECTED BLOCK
                     contentPane.innerHTML = `
                     <div class="project-details">
                         <div class="project-header">
                             <h3>${project.title}</h3>
                             <div class="file-id">CASE FILE ID: ${project.id.toUpperCase()}</div>
                         </div>
+
+                        <!-- The missing content grid is now back -->
                         <div class="project-content-grid">
                             <div class="project-image-container">
                                 <img class="project-thumbnail" src="${project.thumbnail}" alt="${project.title}">
                             </div>
                             <div class="project-briefing">
-                                <h4>// MISSION BRIEFING</h4>
                                 <p>${project.description}</p>
                             </div>
                         </div>
+
                         <div class="project-tech-stack">
-                            <h4>// TECHNOLOGY STACK</h4>
                             <div class="project-tags">${tagsHTML}</div>
                         </div>
                         <div class="project-links-container">
-                            <h4>// ACCESS POINTS</h4>
                             <div class="project-links">${linksHTML}</div>
                         </div>
                     </div>`;
