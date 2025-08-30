@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aaradhya Vairagi - Engineering Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Engineering Drawing Theme */
+        :root {
+            --blueprint-blue: #0a2342;
+            --grid-blue: #2e5eaa;
+            --highlight: #00a0e9;
+            --paper: #f0f7f4;
+            --ink: #0a2342;
+            --accent: #ff6b6b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+        
+        body {
+            background-color: var(--paper);
+            color: var(--ink);
+            background-image: 
+                linear-gradient(rgba(46, 94, 170, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(46, 94, 170, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Title Block (Like Engineering Drawing Title Block) */
+        .title-block {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            border: 2px solid var(--blueprint-blue);
+            padding: 10px;
+            background: white;
+            z-index: 100;
+            box-shadow: 5px 5px 0 var(--blueprint-blue);
+        }
+        
+        .title-block h2 {
+            text-align: center;
+            border-bottom: 1px solid var(--blueprint-blue);
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .title-block-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        /* Border with measurement ticks */
+        .border-measure {
+            position: fixed;
+            border: 1px solid var(--blueprint-blue);
+            margin: 30px;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 90;
+        }
+        
+        .measure-tick {
+            position: absolute;
+            width: 5px;
+            height: 1px;
+            background: var(--blueprint-blue);
+        }
+        
+        /* Orthographic Views Container */
+        .orthographic-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        
+        .view {
+            border: 2px solid var(--blueprint-blue);
+            padding: 20px;
+            background: white;
+            position: relative;
+            box-shadow: 5px 5px 0 var(--blueprint-blue);
+            min-height: 300px;
+            overflow: hidden;
+        }
+        
+        .view-title {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: white;
+            padding: 5px 10px;
+            border: 1px solid var(--blueprint-blue);
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        /* Front View (Top-left) */
+        #front-view {
+            grid-column: 1;
+            grid-row: 1;
+        }
+        
+        /* Top View (Top-right) */
+        #top-view {
+            grid-column: 2;
+            grid-row: 1;
+        }
+        
+        /* Side View (Bottom-left) */
+        #side-view {
+            grid-column: 1;
+            grid-row: 2;
+        }
+        
+        /* Isometric View (Bottom-right) */
+        #isometric-view {
+            grid-column: 2;
+            grid-row: 2;
+        }
+        
+        /* Section styles */
+        .section-title {
+            position: relative;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px dashed var(--blueprint-blue);
+            font-size: 1.5rem;
+            color: var(--blueprint-blue);
+            margin-top: 30px;
+        }
+        
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--highlight);
+        }
+        
+        /* Content styles */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .grid-item {
+            padding: 15px;
+            border: 1px solid var(--grid-blue);
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .grid-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 3px 3px 0 var(--blueprint-blue);
+        }
+        
+        .grid-item h3 {
+            color: var(--blueprint-blue);
+            border-bottom: 1px dotted var(--grid-blue);
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+        
+        ul {
+            list-style-type: none;
+        }
+        
+        li {
+            margin-bottom: 8px;
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        li::before {
+            content: "■";
+            position: absolute;
+            left: 0;
+            color: var(--highlight);
+            font-size: 0.8rem;
+        }
+        
+        /* Header styles */
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+        }
+        
+        .name-title {
+            font-size: 2.8rem;
+            color: var(--blueprint-blue);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 10px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .name-title::before, .name-title::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 80px;
+            height: 2px;
+            background: var(--blueprint-blue);
+        }
+        
+        .name-title::before {
+            right: 100%;
+            margin-right: 15px;
+        }
+        
+        .name-title::after {
+            left: 100%;
+            margin-left: 15px;
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            color: var(--grid-blue);
+            font-weight: normal;
+        }
+        
+        /* Dimension lines */
+        .dimension-line {
+            position: absolute;
+            background: var(--blueprint-blue);
+        }
+        
+        .dimension-h {
+            height: 1px;
+        }
+        
+        .dimension-v {
+            width: 1px;
+        }
+        
+        .dimension-arrow {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border: 5px solid transparent;
+            border-top-width: 0;
+            border-bottom: 5px solid var(--blueprint-blue);
+        }
+        
+        .dimension-label {
+            position: absolute;
+            font-size: 0.7rem;
+            color: var(--blueprint-blue);
+            background: white;
+            padding: 2px 5px;
+        }
+        
+        /* Contact elements */
+        .contact-icons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            border: 2px solid var(--blueprint-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            transform: rotate(45deg);
+            transition: all 0.3s ease;
+        }
+        
+        .contact-icon i {
+            transform: rotate(-45deg);
+            color: var(--blueprint-blue);
+            font-size: 1.3rem;
+        }
+        
+        .contact-icon:hover {
+            background: var(--blueprint-blue);
+        }
+        
+        .contact-icon:hover i {
+            color: white;
+        }
+        
+        /* Engineering elements */
+        .engineering-element {
+            position: absolute;
+            z-index: -1;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        
+        /* Isometric cube in the isometric view */
+        .iso-cube {
+            width: 120px;
+            height: 120px;
+            position: relative;
+            margin: 40px auto;
+            transform-style: preserve-3d;
+            transform: rotateX(60deg) rotateZ(45deg);
+            transition: transform 1s;
+        }
+        
+        .cube-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid var(--blueprint-blue);
+            background: rgba(10, 35, 66, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .front {
+            transform: translateZ(60px);
+        }
+        
+        .back {
+            transform: translateZ(-60px);
+        }
+        
+        .top {
+            transform: rotateX(90deg) translateZ(60px);
+        }
+        
+        .bottom {
+            transform: rotateX(90deg) translateZ(-60px);
+        }
+        
+        .left {
+            transform: rotateY(90deg) translateZ(60px);
+        }
+        
+        .right {
+            transform: rotateY(90deg) translateZ(-60px);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 900px) {
+            .orthographic-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+            }
+            
+            #front-view, #top-view, #side-view, #isometric-view {
+                grid-column: 1;
+            }
+            
+            #front-view {
+                grid-row: 1;
+            }
+            
+            #top-view {
+                grid-row: 2;
+            }
+            
+            #side-view {
+                grid-row: 3;
+            }
+            
+            #isometric-view {
+                grid-row: 4;
+            }
+            
+            .name-title {
+                font-size: 2rem;
+            }
+            
+            .name-title::before, .name-title::after {
+                width: 40px;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .name-title {
+                font-size: 1.8rem;
+            }
+            
+            .name-title::before, .name-title::after {
+                display: none;
+            }
+            
+            .title-block {
+                position: relative;
+                width: 90%;
+                margin: 20px auto;
+                bottom: 0;
+                right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Engineering Drawing Elements -->
+    <div class="border-measure"></div>
+    
+    <!-- Title Block -->
+    <div class="title-block">
+        <h2>PORTFOLIO SPECIFICATIONS</h2>
+        <div class="title-block-row">
+            <span>NAME:</span>
+            <span>Aaradhya Vairagi</span>
+        </div>
+        <div class="title-block-row">
+            <span>TITLE:</span>
+            <span>Software Engineer</span>
+        </div>
+        <div class="title-block-row">
+            <span>DATE:</span>
+            <span id="current-date"></span>
+        </div>
+        <div class="title-block-row">
+            <span>SCALE:</span>
+            <span>1:1</span>
+        </div>
+        <div class="title-block-row">
+            <span>DWG NO:</span>
+            <span>CS-2024-001</span>
+        </div>
+    </div>
+    
+    <header>
+        <h1 class="name-title">Aaradhya Vairagi</h1>
+        <h2 class="subtitle">Computer Science Engineer</h2>
+    </header>
+    
+    <!-- Orthographic Views Container -->
+    <div class="orthographic-container">
+        <!-- Front View -->
+        <div class="view" id="front-view">
+            <div class="view-title">FRONT VIEW - EDUCATION</div>
+            <div class="section-title">EDUCATION</div>
+            <div class="content-grid">
+                <div class="grid-item">
+                    <h3>Parul University</h3>
+                    <p>Bachelor of Technology in Computer Science and Engineering</p>
+                    <p><strong>CGPA:</strong> 7.3</p>
+                </div>
+                <div class="grid-item">
+                    <h3>Kendriya Vidyalaya School</h3>
+                    <p>Physics, Chemistry, Mathematics (PCM)</p>
+                    <p><strong>Percentage:</strong> 67%</p>
+                </div>
+                <div class="grid-item">
+                    <h3>Kendriya Vidyalaya Gail School</h3>
+                    <p>CBSE Curriculum</p>
+                    <p><strong>Percentage:</strong> 72%</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Top View -->
+        <div class="view" id="top-view">
+            <div class="view-title">TOP VIEW - PROJECTS</div>
+            <div class="section-title">ENGINEERING PROJECTS</div>
+            <div class="content-grid">
+                <div class="grid-item">
+                    <h3>Rubik's Cube Solver</h3>
+                    <p><strong>Tools:</strong> Java, JavaFx, IDA*/BFS Algorithm</p>
+                    <ul>
+                        <li>Built solver with IDA* and BFS algorithms</li>
+                        <li>JavaFX GUI for visualization</li>
+                        <li>Modular code architecture</li>
+                    </ul>
+                </div>
+                <div class="grid-item">
+                    <h3>Realtime Whiteboard</h3>
+                    <p><strong>Tools:</strong> Spring Boot, WebSockets, HTML5 Canvas</p>
+                    <ul>
+                        <li>Real-time collaborative whiteboard</li>
+                        <li>Drawing and erasing features</li>
+                        <li>Multi-user synchronization</li>
+                    </ul>
+                </div>
+                <div class="grid-item">
+                    <h3>URL Shortener</h3>
+                    <p><strong>Tools:</strong> Spring Boot, MySQL, REST API</p>
+                    <ul>
+                        <li>URL shortening service</li>
+                        <li>Expiry dates and click tracking</li>
+                        <li>Fast redirection system</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Side View -->
+        <div class="view" id="side-view">
+            <div class="view-title">SIDE VIEW - SKILLS</div>
+            <div class="section-title">TECHNICAL SPECIFICATIONS</div>
+            <div class="content-grid">
+                <div class="grid-item">
+                    <h3>Programming Languages</h3>
+                    <ul>
+                        <li>Java</li>
+                        <li>HTML/CSS</li>
+                        <li>JavaScript</li>
+                    </ul>
+                </div>
+                <div class="grid-item">
+                    <h3>Frameworks & Libraries</h3>
+                    <ul>
+                        <li>Spring Boot</li>
+                        <li>Hibernate</li>
+                        <li>JSP/Servlets</li>
+                        <li>JavaFX</li>
+                    </ul>
+                </div>
+                <div class="grid-item">
+                    <h3>CS Fundamentals</h3>
+                    <ul>
+                        <li>Object-Oriented Programming</li>
+                        <li>DBMS</li>
+                        <li>Operating Systems</li>
+                        <li>Data Structures & Algorithms</li>
+                    </ul>
+                </div>
+                <div class="grid-item">
+                    <h3>Database Systems</h3>
+                    <ul>
+                        <li>MySQL</li>
+                        <li>MongoDB</li>
+                    </ul>
+                </div>
+                <div class="grid-item">
+                    <h3>Development Tools</h3>
+                    <ul>
+                        <li>Git & GitHub</li>
+                        <li>Eclipse</li>
+                        <li>IntelliJ IDEA</li>
+                        <li>Maven</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Isometric View -->
+        <div class="view" id="isometric-view">
+            <div class="view-title">ISOMETRIC VIEW - CONTACT</div>
+            <div class="section-title">CONTACT INFORMATION</div>
+            
+            <div class="iso-cube">
+                <div class="cube-face front"><i class="fas fa-user"></i></div>
+                <div class="cube-face back"><i class="fas fa-graduation-cap"></i></div>
+                <div class="cube-face top"><i class="fas fa-code"></i></div>
+                <div class="cube-face bottom"><i class="fas fa-tools"></i></div>
+                <div class="cube-face left"><i class="fas fa-project-diagram"></i></div>
+                <div class="cube-face right"><i class="fas fa-envelope"></i></div>
+            </div>
+            
+            <div class="contact-icons">
+                <a href="tel:+918989146299" class="contact-icon">
+                    <i class="fas fa-phone"></i>
+                </a>
+                <a href="mailto:aaradhyavairagi@gmail.com" class="contact-icon">
+                    <i class="fas fa-envelope"></i>
+                </a>
+                <a href="https://github.com/aaradhy22" class="contact-icon">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/aaradhy-vairagi-a22b35317/" class="contact-icon">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <p>+918989146299 / +919630713692</p>
+                <p>aaradhyavairagi@gmail.com | 2203051050019@paruluniversity.ac.in</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set current date in title block
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString();
+        
+        // Create measurement ticks around the border
+        function createMeasurementTicks() {
+            const borderMeasure = document.querySelector('.border-measure');
+            const width = borderMeasure.offsetWidth;
+            const height = borderMeasure.offsetHeight;
+            
+            // Create horizontal ticks (top and bottom)
+            for (let i = 0; i < width; i += 20) {
+                // Top ticks
+                const topTick = document.createElement('div');
+                topTick.classList.add('measure-tick');
+                topTick.style.top = '0';
+                topTick.style.left = i + 'px';
+                borderMeasure.appendChild(topTick);
+                
+                // Bottom ticks
+                const bottomTick = document.createElement('div');
+                bottomTick.classList.add('measure-tick');
+                bottomTick.style.bottom = '0';
+                bottomTick.style.left = i + 'px';
+                borderMeasure.appendChild(bottomTick);
+            }
+            
+            // Create vertical ticks (left and right)
+            for (let i = 0; i < height; i += 20) {
+                // Left ticks
+                const leftTick = document.createElement('div');
+                leftTick.classList.add('measure-tick');
+                leftTick.style.left = '0';
+                leftTick.style.top = i + 'px';
+                leftTick.style.width = '1px';
+                leftTick.style.height = '5px';
+                borderMeasure.appendChild(leftTick);
+                
+                // Right ticks
+                const rightTick = document.createElement('div');
+                rightTick.classList.add('measure-tick');
+                rightTick.style.right = '0';
+                rightTick.style.top = i + 'px';
+                rightTick.style.width = '1px';
+                rightTick.style.height = '5px';
+                borderMeasure.appendChild(rightTick);
+            }
+        }
+        
+        // Add animation to isometric cube
+        const isoCube = document.querySelector('.iso-cube');
+        let rotateX = 60;
+        let rotateZ = 45;
+        
+        function animateCube() {
+            rotateZ += 0.5;
+            isoCube.style.transform = `rotateX(${rotateX}deg) rotateZ(${rotateZ}deg)`;
+            requestAnimationFrame(animateCube);
+        }
+        
+        // Initialize when page loads
+        window.addEventListener('load', function() {
+            createMeasurementTicks();
+            animateCube();
+            
+            // Add hover effect to cube
+            isoCube.addEventListener('mouseenter', () => {
+                rotateX = 65;
+            });
+            
+            isoCube.addEventListener('mouseleave', () => {
+                rotateX = 60;
+            });
+        });
+    </script>
+</body>
+</html>
